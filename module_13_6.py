@@ -25,31 +25,31 @@ class UserState(StatesGroup):
 @dp.callback_query_handler(text='formulas')
 async def get_formulas(call):
     await call.message.answer('Для мужчин: 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5\n '
-                              'Для женщин: 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161')
+                              'Для женщин: 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161', reply_markup=kb)
     await call.answer()
 
 
 @dp.message_handler(commands=['start'])
 async def start(message):
-    await message.answer('Привет, я бот помогающий твоему здоровью!', reply_markup=None)
+    await message.answer('Привет, я бот помогающий твоему здоровью!', reply_markup=kb)
 
 
 @dp.callback_query_handler(text='calories')
 async def set_age(call):
-    await call.message.answer('Введите свой возраст',  reply_markup=None)
+    await call.message.answer('Введите свой возраст', reply_markup=None)
     await UserState.age.set()
     await call.answer()
 
 @dp.message_handler(state=UserState.age)
 async def set_growth(message, state):
     await state.update_data(age=int(message.text))
-    await message.answer('Введите свой рост',  reply_markup=None)
+    await message.answer('Введите свой рост', reply_markup=None)
     await UserState.growth.set()
 
 @dp.message_handler(state=UserState.growth)
 async def set_weight(message, state):
    await state.update_data(growth=int(message.text))
-   await message.answer('Введите свой вес',  reply_markup=None)
+   await message.answer('Введите свой вес', reply_markup=None)
    await UserState.weight.set()
 
 @dp.message_handler(state=UserState.weight)
@@ -60,7 +60,7 @@ async def send_calories(message, state):
     growth = data['growth']
     weight = data['weight']
     calories = 10 * weight + 6.25 * growth - 5 * age + 5
-    await message.answer(f'Ваша дневная норма калорий: {calories} ккал', reply_markup=None)
+    await message.answer(f'Ваша дневная норма калорий: {calories} ккал', reply_markup=kb)
     await state.finish()
 
 
